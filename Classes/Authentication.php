@@ -8,7 +8,7 @@ class Authentication {
     }
 
     public function login($username, $password) {
-        $sql = "SELECT * FROM users WHERE username = :username AND password = :password";
+        $sql = "SELECT * FROM user WHERE username = :username AND password = :password";
         $stmt = $this->db->prepare($sql);
         $stmt->execute(['username' => $username, 'password' => $password]);
         $user = $stmt->fetch();
@@ -25,7 +25,7 @@ class Authentication {
         header('Location: login.php');
     }
 
-    
+
 
 
 
