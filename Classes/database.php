@@ -1,7 +1,7 @@
 <?php 
 
     class Database {
-        private $dsn = "mysql:host=localhost;dbname=gestionBlog";
+        private $dsn = "mysql:host=localhost;dbname=blog_poo";
         private $username = "root";
         private $password = "123";
         public $conn;
@@ -27,8 +27,5 @@
         }
     
         
-        public function close() {
-            $this->conn = null;
-        }
     }
 ?>
