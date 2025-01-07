@@ -12,6 +12,7 @@
                 $this->conn = new PDO($this->dsn, $this->username, $this->password);
                 // Set the PDO error mode to exception
                 $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                echo "True";
             } catch (PDOException $e) {
                 die("Connection failed: " . $e->getMessage());
             }
