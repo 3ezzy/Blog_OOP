@@ -9,10 +9,7 @@ class Likes {
     public $created_at;
     public $updated_at;
 
-    // Constructor to initialize the database connection
-    public function __construct($db) {
-        $this->db = $db;
-    }
+    
 
     // Method to create a new like
     public function createLike($user_id, $article_id, $statut) {

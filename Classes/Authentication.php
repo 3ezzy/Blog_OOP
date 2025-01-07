@@ -3,10 +3,7 @@
 class Authentication {
 
     private $db;
-    public function __construct($db) {
-        $this->db = $db;
-        session_start(); 
-    }
+
 
     public function login($username, $password) {
         $sql = "SELECT * FROM user WHERE username = :username";

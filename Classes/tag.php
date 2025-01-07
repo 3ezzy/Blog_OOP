@@ -6,12 +6,7 @@ private $db;
 public $id;
 public $name;
 
-public function __construct($db, $id = null) {
-    $this->db = $db;
-    if ($id) {
-        $this->loadTagById($id);
-    }
-}
+
 
 public function loadTagById($id) {
     $sql = "SELECT * FROM tag WHERE id = :id";

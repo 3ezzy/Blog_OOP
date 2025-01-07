@@ -7,14 +7,6 @@ class User {
     public $role_id;
 
     
-    public function __construct($db, $id = null) {
-        $this->db = $db;
-        session_start(); // Start the session
-
-        if ($id) {
-            $this->loadUserById($id);
-        }
-    }
 
     // Load a user by their id
     public function loadUserById($id) {
