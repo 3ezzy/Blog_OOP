@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($user && password_verify($password, $user['password'])) {
         // User authenticated successfully
         $_SESSION['user_id'] = $user['id'];
-        header("Location: index.php");
+        header("Location: ../index.php");
         exit;
     } else {
         // Authentication failed
