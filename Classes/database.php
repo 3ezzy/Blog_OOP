@@ -1,21 +1,30 @@
-<?php 
+<?php
 
-    class Database {
-        private $dsn = "mysql:host=localhost;dbname=blog_poo";
-        private $username = "root";
-        private $password = "123";
-        public $conn;
-    
-    
-        public function query($sql) {
-            return $this->conn->query($sql);
+class Database
+{
+    private $servername = "localhost";
+    private $username = "root";
+    private $password = "123";
+    private $dbName = "blog_poo";
+    public $conn;
+
+
+
+    public function getConnection()
+    {
+        $this->conn = null;
+
+
+        try {
+            $this->conn = new mysqli($this->servername, $this->username, $this->password, $this->dbName);
+            if ($this->conn) {
+                return $this->conn;
+                // throw new Exception("Connection failed: " . $this->conn->connect_error);
+            }
+        } catch (Exception $e) {
+            echo "Connection error: " . $e->getMessage();
         }
-    
-        
-        public function prepare($sql) {
-            return $this->conn->prepare($sql);
-        }
-    
-        
+
+        return $this->conn;
     }
-?>
+}
