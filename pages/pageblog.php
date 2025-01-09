@@ -1,23 +1,23 @@
 <?php
-
-require_once 'Classes/article.php';
-
 session_start();
+require_once '../Classes/article.php';
 
+if (!isset($_SESSION['user_id'])) {
+    die("Please log in to view your articles.");
+}
 
+$user_id = $_SESSION['user_id'];
 $article = new article();
-$result = $article->getArticles();
-// var_dump($result);
+$articles = $article->getArticlesByUserId($user_id);
+
 
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
-    <!-- Title -->
     <title>Blog</title>
-
     <!-- Favicon -->
     <link rel="shortcut icon" href="https://preline.co/favicon.ico">
 
@@ -27,8 +27,7 @@ $result = $article->getArticles();
     <link rel="stylesheet" href="https://preline.co/assets/css/main.min.css">
 </head>
 
-<body class="dark:bg-neutral-900">
-    <!-- ========== HEADER ========== -->
+<body>
     <header class="bg-white border-b border-gray-200 flex flex-wrap md:justify-start md:flex-nowrap z-50 w-full">
         <nav class="relative max-w-[85rem] w-full md:flex md:items-center md:justify-between md:gap-3 mx-auto px-4 sm:px-6 lg:px-8 py-2">
             <!-- Logo w/ Collapse Button -->
@@ -58,7 +57,7 @@ $result = $article->getArticles();
             <div id="hs-header-classic" class="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow md:block" aria-labelledby="hs-header-classic-collapse">
                 <div class="overflow-hidden overflow-y-auto max-h-[75vh] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300">
                     <div class="py-2 md:py-0 flex flex-col md:flex-row md:items-center md:justify-end gap-0.5 md:gap-1">
-                        <a class="p-2 flex items-center text-sm text-blue-600 focus:outline-none focus:text-blue-600" href="index.php" aria-current="page">
+                        <a class="p-2 flex items-center text-sm hover:text-gray-500 focus:outline-none focus:text-gray-500" href="../index.php" aria-current="page">
                             <svg class="shrink-0 size-4 me-3 md:me-2 block md:hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
                                 <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
@@ -66,7 +65,7 @@ $result = $article->getArticles();
                             Home
                         </a>
 
-                        <a class="p-2 flex items-center text-sm text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500" href="pages/pageblog.php">
+                        <a class="p-2 flex items-center text-sm text-blue-600 focus:outline-none focus:text-blue-600" href="pageblog.php" aria-current="page">
                             <svg class="shrink-0 size-4 me-3 md:me-2 block md:hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
                                 <circle cx="12" cy="7" r="4" />
@@ -94,13 +93,9 @@ $result = $article->getArticles();
                             About us
                         </a>
 
-
-                        <!-- End Dropdown -->
-
                         <!-- Button Group -->
                         <div class="relative flex flex-wrap items-center gap-x-1.5 md:ps-2.5 mt-1 md:mt-0 md:ms-1.5 before:block before:absolute before:top-1/2 before:-start-px before:w-px before:h-4 before:bg-gray-300 before:-translate-y-1/2">
                             <?php
-
                             if (isset($_SESSION['username'])) {
                                 $username = $_SESSION['username'];
                                 // Display username if logged in
@@ -108,14 +103,12 @@ $result = $article->getArticles();
                             ?>
                                 <a class="p-2 w-full flex items-center text-sm text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500" href="Connexion/logout.php">
                                     <svg class="shrink-0 size-4 me-3 md:me-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
-                                        <!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc. -->
                                         <path d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 192 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l210.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128zM160 96c17.7 0 32-14.3 32-32s-14.3-32-32-32L96 32C43 32 0 75 0 128L0 384c0 53 43 96 96 96l64 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32l0-256c0-17.7 14.3-32 32-32l64 0z" />
                                     </svg>
                                     Log out
                                 </a>
                             <?php
                             } else {
-
                             ?>
                                 <a class="p-2 w-full flex items-center text-sm text-gray-800 hover:text-gray-500 focus:outline-none focus:text-gray-500" href="Connexion/login.php">
                                     <svg class="shrink-0 size-4 me-3 md:me-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -128,8 +121,6 @@ $result = $article->getArticles();
                             }
                             ?>
                         </div>
-
-
                         <!-- End Button Group -->
                     </div>
                 </div>
@@ -137,75 +128,20 @@ $result = $article->getArticles();
             <!-- End Collapse -->
         </nav>
     </header>
-    <section class="py-15 ">
 
-        <div class="mx-auto max-w-screen-2xl px-4 py-8 sm:px-6 lg:px-8">
-            <div class="overflow-hidden bg-gray-50 sm:grid sm:grid-cols-2">
-                <div class="p-8 md:p-12 lg:px-16 lg:py-24">
-                    <div class="mx-auto max-w-xl text-center ltr:sm:text-left rtl:sm:text-right">
-                        <h2 class="text-2xl font-bold text-gray-900 md:text-3xl">
-                            Basketball, a thrilling game, unites players through teamwork, skill, and passion for the sport.
-                        </h2>
+    <!-- Add Article Button -->
+    <div class="flex justify-center items-center mt-4">
+        <a href="addArticle.php" class="inline-block rounded bg-indigo-600 px-8 py-3 text-sm font-medium text-white transition hover:scale-110 hover:shadow-xl focus:outline-none focus:ring active:bg-indigo-500">
+            Add Article
+        </a>
+    </div>
 
-                        <p class="hidden text-gray-500 md:mt-4 md:block">
-                            Basketball is an exciting sport that combines speed and skill. Players compete in teams, aiming to score points by shooting the ball into the hoop. The game requires teamwork and strategy, making it a favorite among fans.
-                        </p>
-
-                        <div class="mt-4 md:mt-8">
-                            <a
-                                href="#"
-                                class="inline-block rounded bg-indigo-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-emerald-700 focus:outline-none focus:ring focus:ring-yellow-400">
-                                Get Started Today
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <img
-                    alt=""
-                    src="https://images.unsplash.com/photo-1486882430381-e76d701e0a3e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    class="h-56 w-full object-cover sm:h-full" />
-            </div>
+    <main class="max-w-7xl mx-auto py-12 px-6">
+        <h1 class="text-3xl font-semibold text-center text-gray-900 mb-10">Blog Articles</h1>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <?php $pageBlog->display(); ?>
         </div>
-        <!-- End Card Blog -->
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h2 class="font-manrope text-4xl font-bold text-gray-900 text-center mb-8">Our latest blog</h2>
-            <div class="flex justify-center gap-y-8 lg:gap-y-0 flex-wrap md:flex-wrap lg:flex-nowrap lg:flex-row lg:justify-between lg:gap-x-8">
-                <?php while ($article = $result) : ?>
-                    <div class="group w-full max-lg:max-w-xl lg:w-1/3 border border-gray-300 rounded-2xl">
-                        <div class="flex items-center ">
-                            <img src="<?= $article['image'] ?>" alt="<?= $article['title'] ?>"
-                                class="rounded-t-2xl w-full h-48 object-cover rounded-2xl">
-                        </div>
-                        <div class="p-4 lg:p-6 transition-all duration-300 rounded-b-2xl group-hover:bg-gray-50">
-                            <span class="text-indigo-600 font-medium mb-3 block">
-                                <?= date("M d, Y", strtotime($article['created_at'])) ?>
-                            </span>
-                            <h4 class="text-xl text-gray-900 font-medium leading-8 mb-5">
-                                <?= $article['title'] ?>
-                            </h4>
-                            <p class="text-gray-500 leading-6 mb-10">
-                                <?= substr($article['content'], 0, 100) . '...' ?>
-                            </p>
-                            <a href="showarticle.php?id=<?= $article['id'] ?>" class="cursor-pointer text-lg text-indigo-600 font-semibold">Read more..</a>
-                        </div>
-                    </div>
-                <?php endwhile; ?>
-            </div>
-
-        </div>
-
-
-    </section>
-
-    <!--
-  Heads up! 👋
-
-  This component comes with some `rtl` classes. Please remove them if they are not needed in your project.
-
-  Plugins:
-    - @tailwindcss/forms
--->
+    </main>
 
     <footer class="bg-white">
         <div class="mx-auto max-w-screen-xl px-4 py-16 sm:px-6 lg:px-8">
@@ -468,17 +404,6 @@ $result = $article->getArticles();
         </div>
     </footer>
 
-
-
-
-
-    <!-- ========== END HEADER ========== -->
-    <!-- JS Implementing Plugins -->
-
-    <!-- JS PLUGINS -->
-    <!-- Required plugins -->
-    <script src="https://cdn.jsdelivr.net/npm/preline/dist/preline.min.js"></script>
-    <script src="./node_modules/preline/dist/preline.js"></script>
 </body>
 
 </html>

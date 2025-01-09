@@ -17,17 +17,16 @@ class Article
         $this->user_id = $user_id;
     }
 
-
-
     // Load an article by its id
     public function loadArticleById($id)
     {
-
         $db = new Database();
         $getcon = $db->getConnection();
-        $sql = "SELECT * FROM article WHERE id = :id"; // Changed to 'article'
-        $stmt = $getcon->query($sql);
-        $result = $stmt->fetch_assoc();
+        $sql = "SELECT * FROM article WHERE id = :id";
+        $stmt = $getcon->prepare($sql);
+        $stmt->bind_param(":id", $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
 
         if ($result) {
             $this->id = $result['id'];
@@ -39,6 +38,20 @@ class Article
             throw new Exception("Article not found.");
         }
     }
+
+    public function getArticlesByUserId($user_id) {
+        $db = new Database();
+        $getcon = $db->getConnection();
+    
+        $sql = "SELECT * FROM article WHERE user_id = ?";
+        $stmt = $getcon->prepare($sql);
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function getArticles()
     {
         $db = new Database();
@@ -46,22 +59,19 @@ class Article
 
         $sql = "SELECT * FROM article";
         $stmt = $getcon->query($sql);
-        return $stmt->fetch_assoc();
+        return $stmt->fetch_all(MYSQLI_ASSOC); // changed from fetch_assoc to fetch_all
     }
 
     // Create a new article
     public function createArticle($title, $content, $image, $user_id)
     {
-
         $db = new Database();
         $getcon = $db->getConnection();
-        $sql = "INSERT INTO article (title, content, image, user_id) VALUES (:title, :content, :image, :user_id)"; // Changed to 'article'
-        $stmt = $getcon->query($sql);
-        $title->bindParam(':title', $title);
-        $content->bindParam(':content', $content);
-        $image->bindParam(':image', $image);
-        $user_id->bindParam(':user_id', $user_id);
-        return $stmt->fetch_assoc();
+        $sql = "INSERT INTO article (title, content, image, user_id) VALUES (?, ?, ?, ?)";
+        $stmt = $getcon->prepare($sql);
+        $stmt->bind_param('sssi', $title, $content, $image, $user_id);
+        $stmt->execute();
+        return $stmt->insert_id; // return the inserted ID
     }
 
     // Update an existing article
@@ -69,13 +79,11 @@ class Article
     {
         $db = new Database();
         $getcon = $db->getConnection();
-        $sql = "UPDATE article SET title = :title, content = :content, image = :image WHERE id = :id";
-        $stmt = $getcon->query($sql);
-        $title->bindParam(':title', $title);
-        $content->bindParam(':content', $content);
-        $image->bindParam(':image', $image);
-        $id = (int)$this->id;
-        return $stmt->fetch_assoc();
+        $sql = "UPDATE article SET title = ?, content = ?, image = ? WHERE id = ?";
+        $stmt = $getcon->prepare($sql);
+        $stmt->bind_param('sssi', $title, $content, $image, $this->id);
+        $stmt->execute();
+        return $stmt->affected_rows; // return the number of affected rows
     }
 
     // Delete an article
@@ -83,10 +91,11 @@ class Article
     {
         $db = new Database();
         $getcon = $db->getConnection();
-        $sql = "DELETE FROM article WHERE id = :id"; 
-        $stmt = $getcon->query($sql);
-        $id = (int)$this->id;
-        return $stmt->fetch_assoc();
+        $sql = "DELETE FROM article WHERE id = ?";
+        $stmt = $getcon->prepare($sql);
+        $stmt->bind_param('i', $this->id);
+        $stmt->execute();
+        return $stmt->affected_rows; // return the number of affected rows
     }
 
     // Add a tag to an article
@@ -95,11 +104,11 @@ class Article
         $db = new Database();
         $getcon = $db->getConnection();
 
-        $sql = "INSERT INTO article_tags (article_id, tag_id) VALUES (:article_id, :tag_id)";
-        $stmt = $getcon->query($sql);
-        $article_id = (int)$this->id;
-        $tag_id = (int)$tag_id;
-        return $stmt->fetch_assoc();
+        $sql = "INSERT INTO article_tags (article_id, tag_id) VALUES (?, ?)";
+        $stmt = $getcon->prepare($sql);
+        $stmt->bind_param('ii', $this->id, $tag_id);
+        $stmt->execute();
+        return $stmt->insert_id; // return the inserted ID
     }
 
     // Remove a tag from an article
@@ -107,11 +116,11 @@ class Article
     {
         $db = new Database();
         $getcon = $db->getConnection();
-        $sql = "DELETE FROM article_tags WHERE article_id = :article_id AND tag_id = :tag_id";
+        $sql = "DELETE FROM article_tags WHERE article_id = ? AND tag_id = ?";
         $stmt = $getcon->prepare($sql);
-        $article_id = (int)$this->id;
-        $tag_id = (int)$tag_id;
-        return $stmt->execute();
+        $stmt->bind_param('ii', $this->id, $tag_id);
+        $stmt->execute();
+        return $stmt->affected_rows; // return the number of affected rows
     }
 
     // Get all articles
@@ -126,6 +135,6 @@ class Article
             GROUP BY article.id
         ";
         $stmt = $db->query($sql);
-        return $stmt->fetch_assoc();
+        return $stmt->fetch_all(MYSQLI_ASSOC); // return all articles
     }
 }
