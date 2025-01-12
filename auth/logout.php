@@ -1,9 +1,8 @@
 <?php
-
 session_start();
-session_destroy();
+require_once '../db/database.php'; 
+require_once '../classes/User.php';
+$db = (new Database())->connect();
+$logout = (new User($db))->logout(); 
 
-header("Location: login.php");
-
-
-?>
+header("location: ../index.php");
